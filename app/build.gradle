@@ -34,4 +34,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // Required for Note, Taxi and Search Intents
+    implementation 'com.google.android.gms:play-services-basement:16.2.0'
+
+
 }
