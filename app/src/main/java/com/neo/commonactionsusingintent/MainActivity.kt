@@ -1,15 +1,24 @@
 package com.neo.commonactionsusingintent
 
+import android.app.Activity
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.AlarmClock
+import android.provider.ContactsContract
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.actions.NoteIntents
 import com.pluralsight.commonintents.todo
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_message_input.*
 import kotlinx.android.synthetic.main.layout_user_feed.*
 import java.util.*
 
+
+const val REQUEST_SELECT_CONTACT = 1
+const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,6 +44,10 @@ class MainActivity : AppCompatActivity() {
 
         buttonSave.setOnClickListener {
             saveMessageAsNote()
+        }
+
+        select_contact.setOnClickListener {
+            selectContact()
         }
     }
 
@@ -66,16 +79,54 @@ class MainActivity : AppCompatActivity() {
             putExtra(AlarmClock.EXTRA_MESSAGE, "write a post")
             putExtra(AlarmClock.EXTRA_HOUR, 14)
             putExtra(AlarmClock.EXTRA_MINUTES, 40)
-            putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(
-                Calendar.SUNDAY, Calendar.MONDAY,
-                Calendar.TUESDAY, Calendar.WEDNESDAY,
-                Calendar.THURSDAY, Calendar.FRIDAY,
-                Calendar.SATURDAY
-            ))
+            putExtra(
+                AlarmClock.EXTRA_DAYS, arrayListOf(
+                    Calendar.SUNDAY, Calendar.MONDAY,
+                    Calendar.TUESDAY, Calendar.WEDNESDAY,
+                    Calendar.THURSDAY, Calendar.FRIDAY,
+                    Calendar.SATURDAY
+                )
+            )
         }
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
 
+    }
+
+    private fun selectContact() {
+        // intent to select a contact from contact list and ret the contact phone number back
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            // mime type of intent is for phone
+            type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE
+        }
+
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, REQUEST_SELECT_CONTACT)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_SELECT_CONTACT && resultCode == Activity.RESULT_OK) {
+            val contactUri: Uri = data?.data ?: return
+
+            // gets the phone number
+            val projection: Array<String> = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+            contentResolver.query(contactUri, projection, null, null, null).use {cursor ->
+                // if cursor ret is valid, get the phone Number
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        val numberIndex = cursor?.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                        val number = cursor?.getString(numberIndex)
+
+                        // do something with the phone number of selected contact returned
+                        Log.d(TAG, "onActivityResult: Data: $number")
+                    }
+                }
+            }
+        } else{
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }
