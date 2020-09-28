@@ -28,6 +28,18 @@
             android:layout_height="wrap_content"
             android:text="select contact"/>
 
+        <Button
+            android:id="@+id/select_image_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="select image file"/>
+
+        <Button
+            android:id="@+id/play_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play the set file"/>
+
     </LinearLayout>
 
 </ScrollView>

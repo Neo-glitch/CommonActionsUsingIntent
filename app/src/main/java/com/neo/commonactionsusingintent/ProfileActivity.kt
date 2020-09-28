@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -133,7 +134,21 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun onClickListen() {
-        todo("Play Music")
+        // search for an artiste and song
+        val artist = "Roddy Rich"
+        val song = "The Box"
+
+        val intent = Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH).apply {
+            // media focus for searching for an artist
+//            putExtra(MediaStore.EXTRA_MEDIA_FOCUS, MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE)
+            putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/audio")
+            putExtra(MediaStore.EXTRA_MEDIA_ARTIST, artist)
+            putExtra(MediaStore.EXTRA_MEDIA_TITLE, song)
+            putExtra(SearchManager.QUERY, "$artist $song")       // for query
+        }
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        }
     }
 
     private fun omClickSearch() {
@@ -150,7 +165,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun onClickTaxi() {
         // intent to start taxi reservation
         val intent = Intent(ReserveIntents.ACTION_RESERVE_TAXI_RESERVATION)
-        if(intent.resolveActivity(packageManager) != null){
+        if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
     }

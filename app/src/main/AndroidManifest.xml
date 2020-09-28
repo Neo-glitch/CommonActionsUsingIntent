@@ -30,6 +30,20 @@
         </activity>
 
         <activity android:name=".ProfileActivity"></activity>
+
+        <!-- File Provider
+        n.b: grantUriPermissions = true means that we can from cam app to
+        store image on path provided, without req extra permissions-->
+        <provider
+            android:authorities="${applicationId}.provider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>
